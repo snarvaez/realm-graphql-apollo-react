@@ -1,6 +1,6 @@
 // React
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 // Apollo
 import {
   ApolloProvider,
@@ -63,9 +63,8 @@ const client = new ApolloClient({
 });
 
 // Wrap your app with an ApolloProvider that provides the client
-ReactDOM.render(
+createRoot(document.getElementById("root")).render(
   <ApolloProvider client={client}>
     <App />
   </ApolloProvider>,
-  document.getElementById("root")
 );
