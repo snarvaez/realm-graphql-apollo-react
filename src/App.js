@@ -4,10 +4,18 @@ import { APP_ID } from "./index";
 import { useQuery, useMutation } from "@apollo/client";
 import { FIND_MOVIE, UPDATE_MOVIE, GET_TELEMETRY } from "./graphql-operations";
 
+import { Button } from './Button.js'; 
+import { ListComponent } from './ListComponent.js'; 
+
 export default function App(props) {
   const [searchTitle, setSearchTitle] = React.useState("the");
   const [searchPlot, setSearchPlot] = React.useState("mysterious rebels");
   const [searchCastCrewDirs, setSearchCastCrewDirs] = React.useState("hugo");
+
+  const [telemetryYear, setTelemetryYear] = React.useState(2022);
+  const [telemetryMonth, setTelemetryMonth] = React.useState(2);
+
+  
 
   const { loading, data } = useQuery(FIND_MOVIE, {
     variables: { 
@@ -40,27 +48,57 @@ export default function App(props) {
 
   const movieId = (movie && data.movie && data.movie._id) || null;
   console.log("movieID: " + movieId);
-
-  const { loadingTelemetry, telemetryData } = useQuery(GET_TELEMETRY, {
+  
+  var { loadingTelemetry, telemetryData } = useQuery(GET_TELEMETRY, {
     skip: !movieId,
     variables: { 
       query: { 
         movieId: {
           _id: movieId
         },
-        year: 2022,
-        month: 2
+        year: telemetryYear,
+        month: telemetryMonth
       }
     }
   });
 
-  const movieTelemetry = telemetryData ? telemetryData.telemetry : null;
-  const movieTelemetryId = (movieTelemetry && movieTelemetry.telemetry && movieTelemetry.telemetry._id) || null;
+  const movieTelemetry = telemetryData ? telemetryData.myTelemetry : null;
+  const movieTelemetryId = (movieTelemetry && movieTelemetry.myTelemetry && movieTelemetry.myTelemetry._id) || null;
   
   console.log("movieTelemetryId: " + movieTelemetryId);
   console.log(JSON.stringify(movieTelemetry));
   console.log(JSON.stringify(loadingTelemetry));
   console.log(JSON.stringify(telemetryData));
+
+  //const [components, setComponents] = React.useState(["Mercury"]); 
+  //const [componentNames, setComponentNames] = React.useState([ 'Venus', 'Earth', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune' ]); 
+  const [components, setComponents] = React.useState([]); 
+  const [componentNames, setComponentNames] = React.useState([]); 
+
+  
+  function addComponent() {
+
+    window.alert("movieId: " +movieId);
+
+    if (loadingTelemetry)
+      window.alert("telemetry!!");
+    
+    setComponents([...components, [telemetryData.length]]);
+    if (componentNames.length > 0) { 
+      //setComponents([...components, componentNames[0]]);
+      //setComponents([...components, [movieId, telemetryYear, telemetryMonth]]]);
+      componentNames.splice(0, 1);
+    } else { 
+      window.alert("No more planets to add!");
+    } 
+
+    return ( 
+      <div> 
+        <Button onClick={addComponent} text="Call Component"/> 
+        {components.map((item, i) => ( <ListComponent text={item} /> ))} 
+      </div> 
+    ) 
+  } 
 
   return (
     <div className="App">
@@ -130,7 +168,39 @@ export default function App(props) {
         </div>
       )}
 
-      <table>
+      <div>
+        <div className="telemetry-input">
+        <h1>Obtain Viewer Telemetry</h1>
+        <b>Year:</b><input
+            className="fancy-input"
+            value={telemetryYear}
+            onChange={(e) => setTelemetryYear(e.target.value)}
+            type="text"
+          />
+          <br/>
+          <b>Month:</b><input
+            className="fancy-input"
+            value={telemetryMonth}
+            onChange={(e) => setTelemetryMonth(e.target.value)}
+            type="text"
+          />
+        </div>
+
+        <div> 
+          <Button onClick={addComponent} text="Call Component"/> 
+          {components.map((item, i) => ( <ListComponent text={item} /> ))} 
+        </div> 
+        
+      </div> 
+
+      
+    </div>
+  );
+}
+
+
+/*
+<table>
         <th>
           <td>year</td>
           <td>month</td>
@@ -140,7 +210,7 @@ export default function App(props) {
           <td>userId</td>
           <td>resumePointSecs</td>
         </th>
-        {movie && movieTelemetry && (
+        {movieTelemetry && (
             <tr key={movieTelemetry._id}>
               <td>{movieTelemetry.year}</td>
               <td>{movieTelemetry.month}</td>
@@ -152,6 +222,4 @@ export default function App(props) {
             </tr>
           )}
         </table>
-    </div>
-  );
-}
+*/

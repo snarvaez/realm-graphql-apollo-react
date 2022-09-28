@@ -29,7 +29,8 @@ export const UPDATE_MOVIE = gql`
 
 export const GET_TELEMETRY = gql`
   query GetTelemetry($query: Movies_telemetryQueryInput!) {
-    telemetry: getMovieViewerTelemetry(input: $query) {
+    myTelemetry: getMovieViewerTelemetry(input: $query) {
+      _id
       day
       hour
       min
