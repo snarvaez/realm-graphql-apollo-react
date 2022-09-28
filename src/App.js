@@ -5,14 +5,18 @@ import { useQuery, useMutation } from "@apollo/client";
 import { FIND_MOVIE, UPDATE_MOVIE } from "./graphql-operations";
 
 export default function App(props) {
-  const [searchText, setSearchText] = React.useState("The Matrix Reloaded");
+  const [searchTitle, setSearchTitle] = React.useState("the");
+  const [searchPlot, setSearchPlot] = React.useState("mysterious rebels");
+  const [searchCastCrewDirs, setSearchCastCrewDirs] = React.useState("hugo");
+
   const { loading, data } = useQuery(FIND_MOVIE, {
-    variables: { query: { title: searchText } }
-  });
-  console.log({ loading, data })
-  
-  const { loadingTelemetry, data: telemetryData } = useQuery(GET_TELEMETRY, {
-    variables: { query: { title: searchText } }
+    variables: { 
+      query: { 
+        title: searchTitle,
+        plot:  searchPlot,
+        cast:  searchCastCrewDirs
+      }
+    }
   });
 
   const movie = data ? data.movie : null;
@@ -27,7 +31,7 @@ export default function App(props) {
         set: { title: newTitleText }
       }
     });
-    setSearchText(newTitleText);
+    setSearchTitle(newTitleText);
   };
 
   return (
@@ -39,8 +43,22 @@ export default function App(props) {
       <div className="title-input">
         <input
           className="fancy-input"
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
+          value={searchTitle}
+          onChange={(e) => setSearchTitle(e.target.value)}
+          type="text"
+        />
+        <br/>
+        <b>Plot:</b><input
+          className="fancy-input"
+          value={searchPlot}
+          onChange={(e) => setSearchPlot(e.target.value)}
+          type="text"
+        />
+       <br/>
+        <b>Cast, Crew & Directors:</b><input
+          className="fancy-input"
+          value={searchCastCrewDirs}
+          onChange={(e) => setSearchCastCrewDirs(e.target.value)}
           type="text"
         />
       </div>
@@ -71,28 +89,18 @@ export default function App(props) {
             </div>
           )}
           <h2>{movie.title}</h2>
-          <div>Year: {movie.year}</div>
-          <div>Runtime: {movie.runtime} minutes</div>
+          <div><b>Year</b>: {movie.year}</div><br/>
+          <div><b>Plot</b>: {movie.plot}</div><br/>
+          <div><b>Full Plot</b>: {movie.fullplot}</div><br/>
+          <div><b>Cast</b>: {movie.cast}</div><br/>
+          <div><b>Directors</b>: {movie.directors}</div><br/>
+          <div><b>Writers</b>: {movie.writers}</div><br/>
+          <div><b>Year</b>: {movie.year}</div><br/>
+          <div><b>Runtime</b>: {movie.runtime} minutes</div><br/>
           <br />
           <img alt={`Poster for ${movie.title}`} src={movie.poster} />
         </div>
       )}
-      <table>
-        <th>
-          <td>item._id</td>
-          <td>item.day</td>
-          <td>item.month</td>
-        </th>
-        {telemetryData.getTelemetryData.map((item) => {
-          return (
-            <tr key={item._id}>
-              <td>{item._id}</td>
-              <td>{item.day}</td>
-              <td>{item.month}</td>
-            </tr>
-          );
-        })}
-      </table>
     </div>
   );
 }

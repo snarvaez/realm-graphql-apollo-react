@@ -23,7 +23,8 @@ import App from "./App";
 // 5. Deploy your changes
 //
 // Once your app is set up, replace the value of APP_ID with your App ID
-export const APP_ID = "asset-catalog-app-toajf";
+//export const APP_ID = "asset-catalog-app-toajf"; // asset-catalog cluster
+export const APP_ID = "asset-telemetry-app-snyjx"; // asset-telemetry federated cluster
 
 // Connect to your MongoDB Realm app
 const app = new Realm.App(APP_ID);
