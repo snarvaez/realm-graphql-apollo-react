@@ -26,3 +26,17 @@ export const UPDATE_MOVIE = gql`
     }
   }
 `;
+
+export const GET_TELEMETRY = gql`
+  query GetTelemetry($query: Movies_telemetryQueryInput!) {
+    telemetry: getMovieViewerTelemetry(input: $query) {
+      day
+      hour
+      min
+      month
+      resumePointSecs
+      userId
+      year
+    }
+  }
+`;

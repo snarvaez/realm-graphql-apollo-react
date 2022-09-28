@@ -2,7 +2,7 @@ import "./styles.css";
 import * as React from "react";
 import { APP_ID } from "./index";
 import { useQuery, useMutation } from "@apollo/client";
-import { FIND_MOVIE, UPDATE_MOVIE } from "./graphql-operations";
+import { FIND_MOVIE, UPDATE_MOVIE, GET_TELEMETRY } from "./graphql-operations";
 
 export default function App(props) {
   const [searchTitle, setSearchTitle] = React.useState("the");
@@ -20,6 +20,7 @@ export default function App(props) {
   });
 
   const movie = data ? data.movie : null;
+  
   const [updateMovie, { loading: updating }] = useMutation(UPDATE_MOVIE);
   const [newTitleText, setNewTitleText] = React.useState("Silly New Title");
 
@@ -33,6 +34,33 @@ export default function App(props) {
     });
     setSearchTitle(newTitleText);
   };
+
+  //console.log("movie: " + JSON.stringify(movie));
+  //console.log("data: " + JSON.stringify(data));
+
+  const movieId = (movie && data.movie && data.movie._id) || null;
+  console.log("movieID: " + movieId);
+
+  const { loadingTelemetry, telemetryData } = useQuery(GET_TELEMETRY, {
+    skip: !movieId,
+    variables: { 
+      query: { 
+        movieId: {
+          _id: movieId
+        },
+        year: 2022,
+        month: 2
+      }
+    }
+  });
+
+  const movieTelemetry = telemetryData ? telemetryData.telemetry : null;
+  const movieTelemetryId = (movieTelemetry && movieTelemetry.telemetry && movieTelemetry.telemetry._id) || null;
+  
+  console.log("movieTelemetryId: " + movieTelemetryId);
+  console.log(JSON.stringify(movieTelemetry));
+  console.log(JSON.stringify(loadingTelemetry));
+  console.log(JSON.stringify(telemetryData));
 
   return (
     <div className="App">
@@ -101,6 +129,29 @@ export default function App(props) {
           <img alt={`Poster for ${movie.title}`} src={movie.poster} />
         </div>
       )}
+
+      <table>
+        <th>
+          <td>year</td>
+          <td>month</td>
+          <td>day</td>
+          <td>hour</td>
+          <td>min</td>
+          <td>userId</td>
+          <td>resumePointSecs</td>
+        </th>
+        {movie && movieTelemetry && (
+            <tr key={movieTelemetry._id}>
+              <td>{movieTelemetry.year}</td>
+              <td>{movieTelemetry.month}</td>
+              <td>{movieTelemetry.day}</td>
+              <td>{movieTelemetry.hour}</td>
+              <td>{movieTelemetry.min}</td>
+              <td>{movieTelemetry.userId}</td>
+              <td>{movieTelemetry.resumePointSecs}</td>
+            </tr>
+          )}
+        </table>
     </div>
   );
 }
