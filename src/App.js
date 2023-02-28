@@ -2,12 +2,20 @@ import "./styles.css";
 import * as React from "react";
 import { APP_ID } from "./index";
 import { useQuery, useMutation } from "@apollo/client";
-import { FIND_MOVIE, UPDATE_MOVIE } from "./graphql-operations";
+import { FIND_MOVIE, SEARCH_MOVIE, UPDATE_MOVIE } from "./graphql-operations";
 
 export default function App(props) {
   const [searchText, setSearchText] = React.useState("The Matrix Reloaded");
+  /*
+  // use FIND_MOVIE to perform an exact match using GraphQL default query resolvers
   const { loading, data } = useQuery(FIND_MOVIE, {
     variables: { query: { title: searchText } }
+  });
+  */
+ 
+  // use SEARCH_MOVIE to perform a fuzzy text search using GraphQL custom query resolvers and Atlas Search
+  const { loading, data } = useQuery(SEARCH_MOVIE, {
+    variables: { query: { title: searchText } },
   });
 
   const movie = data ? data.movie : null;
